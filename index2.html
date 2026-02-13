@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S. Fortune Interface</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Kanit:wght@200;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --iron-cyan: #00f2ff;
+            --iron-blue: #0066ff;
+            --dark-bg: #020b16;
+            --glass-bg: rgba(0, 242, 255, 0.05);
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--iron-cyan);
+            font-family: 'Orbitron', 'Kanit', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 50%, #0a192f 0%, #020b16 100%),
+                linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+        }
+
+        .system-frame {
+            border: 2px solid var(--iron-cyan);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            background: var(--glass-bg);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2), inset 0 0 15px rgba(0, 242, 255, 0.1);
+            clip-path: polygon(0 0, 90% 0, 100% 10%, 100% 100%, 10% 100%, 0 90%);
+        }
+
+        .header {
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--iron-cyan);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-light {
+            width: 10px;
+            height: 10px;
+            background: var(--iron-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--iron-cyan);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .input-group { margin: 20px 0; }
+
+        input {
+            background: transparent;
+            border: 1px solid var(--iron-blue);
+            color: var(--iron-cyan);
+            padding: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: 'Kanit';
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--iron-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+
+        .analyser-circle {
+            width: 120px;
+            height: 120px;
+            border: 4px dashed var(--iron-cyan);
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+
+        .core {
+            width: 60px;
+            height: 60px;
+            background: var(--iron-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--iron-cyan);
+        }
+
+        button {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--iron-cyan);
+            color: var(--iron-cyan);
+            padding: 15px;
+            text-transform: uppercase;
+            font-family: 'Orbitron';
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: var(--iron-cyan);
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--iron-cyan);
+        }
+
+        #console {
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            text-align: left;
+            height: 100px;
+            overflow-y: hidden;
+            border-left: 2px solid var(--iron-blue);
+            padding-left: 10px;
+        }
+
+        .scanning-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--iron-cyan);
+            top: 0;
+            left: 0;
+            display: none;
+            box-shadow: 0 0 15px var(--iron-cyan);
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .result-overlay {
+            display: none;
+            margin-top: 20px;
+            border: 1px solid var(--iron-blue);
+            padding: 15px;
+            background: rgba(0, 102, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="system-frame">
+    <div class="scanning-line" id="scanner"></div>
+    <div class="header">
+        <span>System: Oracle v4.2</span>
+        <div class="status-light"></div>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="user-input" placeholder="IDENTIFY SUBJECT NAME..." autocomplete="off">
+    </div>
+
+    <div class="analyser-circle">
+        <div class="core"></div>
+    </div>
+
+    <button onclick="startAnalysis()">Initialize Analysis</button>
+
+    <div id="console"></div>
+
+    <div class="result-overlay" id="result-display">
+        <div style="font-size: 0.7rem; color: var(--iron-blue);">ANALYSIS COMPLETE:</div>
+        <div id="fortune-output" style="font-size: 1.1rem; margin-top: 5px;"></div>
+        <div id="prob-output" style="margin-top: 10px; font-size: 0.8rem; color: #ffcc00;"></div>
+    </div>
+</div>
+
+<script>
+    const logs = [
+        "> INITIALIZING BIOMETRIC SCAN...",
+        "> ACCESSING GLOBAL DATABASE...",
+        "> ANALYZING TEMPORAL VIBRATIONS...",
+        "> CALCULATING PROBABILITY VECTORS...",
+        "> DECRYPTING DESTINY CODES..."
+    ];
+
+    const outcomes = [
+        "ตรวจพบพลังงานบวกมหาศาล: โชคลาภกำลังพุ่งเข้าหา",
+        "คำเตือน: ความเสี่ยงทางการเงินสูงใน 24 ชม. นี้",
+        "การวิเคราะห์พบดวงชะตา 'ผู้ชนะ': งานจะสำเร็จราบรื่น",
+        "ตรวจพบคลื่นความรักความถี่สูง: จะมีคนเข้ามาทำความรู้จัก",
+        "ระบบแนะนำให้รีบูตพลังงานชีวิต: พักผ่อนเพื่อรับโชคใหญ่"
+    ];
+
+    function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+    async function startAnalysis() {
+        const name = document.getElementById('user-input').value;
+        const consoleEl = document.getElementById('console');
+        const scanner = document.getElementById('scanner');
+        const result = document.getElementById('result-display');
+        
+        if (!name) {
+            consoleEl.innerHTML = "> ERROR: SUBJECT IDENTIFICATION FAILED.";
+            return;
+        }
+
+        // Reset & Start
+        result.style.display = 'none';
+        consoleEl.innerHTML = "";
+        scanner.style.display = 'block';
+        
+        for (let log of logs) {
+            consoleEl.innerHTML += log + "<br>";
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+            await sleep(600);
+        }
+
+        const randFortune = outcomes[Math.floor(Math.random() * outcomes.length)];
+        const probability = (Math.random() * 100).toFixed(2);
+
+        setTimeout(() => {
+            scanner.style.display = 'none';
+            result.style.display = 'block';
+            document.getElementById('fortune-output').innerText = randFortune;
+            document.getElementById('prob-output').innerText = "SUCCESS PROBABILITY: " + probability + "%";
+            consoleEl.innerHTML += "> ANALYSIS SUCCESSFUL.";
+        }, 500);
+    }
+</script>
+
+</body>
+</html>
